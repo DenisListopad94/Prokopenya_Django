@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Comments{% endblock %}
+{% block content %}
+<h1>Комментарии</h1>
+<ul>
+    {% for user in users_list %}
+    <li>
+        <img src="{% static 'images/user_pic/user.jpg' %}" alt="My image">Имя: {{ user.name }}<br>
+        Отзыв: {{ user.comments }}
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
