@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from .models import Person, Hotels
 
 
 # Create your views here.
@@ -146,5 +147,25 @@ def comments(request):
     return render(
         request=request,
         template_name="comments.html",
+        context=context,
+    )
+
+
+def persons(request):
+    context = {'persons_list': Person.objects.all()}
+
+    return render(
+        request=request,
+        template_name="persons.html",
+        context=context,
+    )
+
+
+def hotels_view(request):
+    context = {'hotels_list_view': Hotels.objects.all()}
+
+    return render(
+        request=request,
+        template_name="hotels_view.html",
         context=context,
     )
