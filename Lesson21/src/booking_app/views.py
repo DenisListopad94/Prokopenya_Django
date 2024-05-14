@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from .models import Person, Hotels
+from .models import Person, Hotels, HotelsComment, User
 
 
 # Create your views here.
@@ -27,60 +27,10 @@ def hotels(request):
 
 
 def users(request):
-    users_list = [
-        {
-            "name": "John",
-            "age": 25,
-            "comments": ["Great post!", "I totally agree with you."]
-        },
-        {
-            "name": "Alice",
-            "age": 30,
-            "comments": ["Interesting perspective.", "Nice work!"]
-        },
-        {
-            "name": "Bob",
-            "age": 28,
-            "comments": ["Thanks for sharing.", "Well written."]
-        },
-        {
-            "name": "Emily",
-            "age": 35,
-            "comments": ["I have a question.", "This is helpful."]
-        },
-        {
-            "name": "David",
-            "age": 22,
-            "comments": ["I learned something new.", "Keep up the good work!"]
-        },
-        {
-            "name": "Emma",
-            "age": 27,
-            "comments": ["Great post!", "I totally agree with you."]
-        },
-        {
-            "name": "Michael",
-            "age": 33,
-            "comments": ["Interesting perspective.", "Nice work!"]
-        },
-        {
-            "name": "Sophia",
-            "age": 29,
-            "comments": ["Thanks for sharing.", "Well written."]
-        },
-        {
-            "name": "William",
-            "age": 31,
-            "comments": ["I have a question.", "This is helpful."]
-        },
-        {
-            "name": "Olivia",
-            "age": 26,
-            "comments": ["I learned something new.", "Keep up the good work!"]
-        }
-    ]
 
-    context = {'users_list': users_list}
+    context = {
+        'users_list': User.objects.all()
+    }
 
     return render(
         request=request,
@@ -152,7 +102,9 @@ def comments(request):
 
 
 def persons(request):
-    context = {'persons_list': Person.objects.all()}
+    context = {
+        'persons_list': Person.objects.all().prefetch_related("hotel_comments").prefetch_related("hobbies")
+    }
 
     return render(
         request=request,
@@ -162,7 +114,9 @@ def persons(request):
 
 
 def hotels_view(request):
-    context = {'hotels_list_view': Hotels.objects.all()}
+    context = {
+        'hotels_list_view': Hotels.objects.all().prefetch_related("owners").prefetch_related("hotel_comments")
+    }
 
     return render(
         request=request,
