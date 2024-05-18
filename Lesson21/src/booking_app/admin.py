@@ -3,8 +3,24 @@ from .models import Person, Profile, Hotels, HotelsComment, HotelOwner, Hobby, B
 # Register your models here.
 
 
+class HotelsCommentInline(admin.TabularInline):
+    model = HotelsComment
+
+
+class HotelsInline(admin.TabularInline):
+    model = BookInfo
+
+
+class PersonCommentInline(admin.TabularInline):
+    model = PersonComment.persons.through
+
+
+class HobbyInline(admin.TabularInline):
+    model = Hobby.owners.through
+
+
 class UserAdmin(admin.ModelAdmin):
-    list_display = ["first_name", "last_name", "email"]
+    list_display = ["first_name", "last_name", "email", "age"]
     fieldsets = [
         (
             None,
@@ -22,14 +38,67 @@ class UserAdmin(admin.ModelAdmin):
     ]
     search_fields = ["first_name", "last_name"]
     search_help_text = "Поиск осуществлятся по имени и фамилии, а также email"
+    list_editable = ["age"]
+    list_filter = ["last_name", "age"]
+    inlines = [
+        HobbyInline,
+    ]
 
 
-admin.site.register(Person)
+class PersonAdmin(admin.ModelAdmin):
+    list_display = ["first_name", "last_name", "email", "age"]
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": ["first_name", "last_name", "age", "sex"],
+            },
+        ),
+        (
+            "Advanced options",
+            {
+                "classes": ["collapse"],
+                "fields": ["city", "email"],
+            },
+        ),
+    ]
+    search_fields = ["first_name", "last_name"]
+    search_help_text = "Поиск осуществлятся по имени и фамилии, а также email"
+    list_editable = ["age"]
+    list_filter = ["last_name", "age"]
+    inlines = [
+        HotelsCommentInline,
+        PersonCommentInline,
+    ]
+
+
+class HobbyAdmin(admin.ModelAdmin):
+    list_display = ["name", "experience"]
+    inlines = [
+        HobbyInline,
+    ]
+
+
+class HotelsAdmin(admin.ModelAdmin):
+    list_display = ["name", "stars", "rating"]
+    inlines = [
+        HotelsInline,
+    ]
+
+
+# class BookInfoAdmin(admin.ModelAdmin):
+#     list_display = ["detail", "book_time"]
+#     inlines = [
+#         PersonInline,
+#     ]
+
+
+admin.site.register(Person, PersonAdmin)
 admin.site.register(Profile)
-admin.site.register(Hotels)
+admin.site.register(Hotels, HotelsAdmin)
 admin.site.register(HotelsComment)
 admin.site.register(HotelOwner)
-admin.site.register(Hobby)
+admin.site.register(Hobby, HobbyAdmin)
 admin.site.register(BookInfo)
 admin.site.register(User, UserAdmin)
 admin.site.register(PersonComment)
