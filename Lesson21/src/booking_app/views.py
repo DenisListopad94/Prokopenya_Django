@@ -1,7 +1,11 @@
-from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
-from .models import Person, Hotels, HotelsComment, User
+from django.contrib import messages
+from django.db import transaction
+from django.db.models import Q
+from django.http import HttpRequest, HttpResponse, HttpResponseServerError, HttpResponseBadRequest
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Person, Hotels, HotelsComment, User, Room, Booking
+from .forms import BookingRoom
+from datetime import timedelta, timezone
 
 
 # Create your views here.
@@ -27,7 +31,6 @@ def hotels(request):
 
 
 def users(request):
-
     context = {
         'users_list': User.objects.all()
     }
@@ -123,3 +126,96 @@ def hotels_view(request):
         template_name="hotels_view.html",
         context=context,
     )
+
+
+# перенаправление на страницу, если успешно забронирована комната
+def details_orders_view(request):
+    context = {
+        'Details': Booking.objects.all()
+    }
+
+    return render(
+        request=request,
+        template_name="details_orders.html",
+        context=context,
+    )
+
+
+def booking_form_view(request, error=''):
+    form = BookingRoom()
+    context = {
+        'form': form,
+        'error': error
+    }
+    return render(request, 'booking_form.html', context)
+
+
+# получаем имя постояльца
+def get_user_full_name(full_name):
+    first_name, last_name = full_name.split()
+    return User.objects.get(Q(first_name=first_name) & Q(last_name=last_name))
+
+
+# получить номер комнаты из отеля
+def get_room_from_hotel(number_of_room, hotel_name):
+    return Room.objects.get(hotel__name=hotel_name, number=number_of_room)
+
+
+# сделать бронирование комнаты
+def book_room(request):
+    if request.method == "POST":
+        form = BookingRoom(request.POST)
+        if form.is_valid():
+            # import pdb
+            # pdb.set_trace()
+            number_of_room = int(request.POST['number_of_room'])
+            hotel_name = request.POST['hotel_name']
+            user = request.POST['user']
+            start_date = request.POST['start_date']
+            end_date = request.POST['end_date']
+
+            try:
+                room = get_room_from_hotel(number_of_room, hotel_name)
+            except:
+                # messages.error(request, "Отель не найден")
+                return booking_form_view(request, error='Комната не найдена')
+
+            try:
+                hotel = Hotels.objects.get(name=hotel_name)
+            except Hotels.DoesNotExist:
+                # messages.error(request, "Отель не найден")
+                return booking_form_view(request, 'Отель не найден')
+
+            try:
+                user = get_user_full_name(user)
+            except User.DoesNotExist:
+                # messages.error(request, "Пользователь не найден")
+                return booking_form_view(request, 'Пользователь не найден')
+
+            is_room_booked = Booking.objects.filter(
+                room__hotel__name=hotel_name,
+                room__number=number_of_room,
+                start_date__lte=start_date,
+                end_date__gte=end_date
+            ).exists()
+            # print(is_room_booked)
+
+            if not is_room_booked:
+                with transaction.atomic():
+                    Booking.objects.create(
+                        room=room,
+                        start_date=start_date,
+                        end_date=end_date,
+                        customer_full_name=user,
+
+                    )
+                    room.is_booked = True
+                    # room.user = user
+                    room.save()
+                return booking_form_view(request, error='Бронирование сформировано')
+            else:
+                return booking_form_view(request, error='Данная комната уже забронирована')
+        print(form.errors)
+    return booking_form_view(request, error='')
+
+

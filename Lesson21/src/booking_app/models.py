@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -106,6 +107,23 @@ class PersonComment(Comment):
 
     def __str__(self):
         return f'{self.comment}'
+
+
+class Room(models.Model):
+    hotel = models.ForeignKey(Hotels, related_name='rooms', on_delete=models.CASCADE)
+    number = models.PositiveIntegerField(validators=[
+        MaxValueValidator(1000),
+        MinValueValidator(1)
+    ])
+    is_booked = models.BooleanField(default=False)
+    user = models.ForeignKey(User, related_name='booked_rooms', on_delete=models.SET_NULL, null=True, blank=True)
+
+
+class Booking(models.Model):
+    room = models.ForeignKey(Room, related_name='bookings', on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    customer_full_name = models.CharField(max_length=255)
 
 
 
