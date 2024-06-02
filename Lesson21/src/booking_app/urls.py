@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import index, hotels, users, comments, hotels_view, persons, book_room, details_orders_view
+from .views import (index, hotels, users, comments, hotels_view, persons, book_room, details_orders_view, user_add,
+                    feedback_add, feedbacks_view)
 # BookingFormView,
 
 urlpatterns = [
@@ -11,6 +12,9 @@ urlpatterns = [
     path('hotels_view', hotels_view, name="hotels_list_view"),
     path('booking_form', book_room, name='book_room'),
     path('details_orders', details_orders_view, name='details_orders'),
+    path('user_add', user_add, name='user_add'),
+    path('add_feedback', feedback_add, name='add_feedback'),
+    path('feedbacks', feedbacks_view, name='feedbacks'),
 ]
 
 

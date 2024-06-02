@@ -1,4 +1,7 @@
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+from .validators import age_validator
+
 from django.db import models
 
 
@@ -10,7 +13,7 @@ class User(models.Model):
     }
     first_name = models.CharField(max_length=30, null=False)
     last_name = models.CharField(max_length=30, null=False)
-    age = models.PositiveIntegerField()
+    age = models.PositiveIntegerField(validators=[age_validator])
     city = models.CharField(max_length=30, null=False)
     sex = models.CharField(max_length=1, choices=SEX_PERSON)
     email = models.EmailField(null=True)
@@ -124,6 +127,12 @@ class Booking(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     customer_full_name = models.CharField(max_length=255)
+
+
+class Feedback(models.Model):
+    user = models.ForeignKey(User, related_name='users_feedback', on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    text = models.CharField(max_length=100)
 
 
 

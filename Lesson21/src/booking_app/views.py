@@ -1,11 +1,10 @@
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpRequest, HttpResponse, HttpResponseServerError, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponse, HttpResponseServerError, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Person, Hotels, HotelsComment, User, Room, Booking
-from .forms import BookingRoom
-from datetime import timedelta, timezone
+from .models import Person, Hotels, HotelsComment, User, Room, Booking, Feedback
+from .forms import BookingRoom, UserModelAddForm, FeedbackModelAddForm
 
 
 # Create your views here.
@@ -219,3 +218,50 @@ def book_room(request):
     return booking_form_view(request, error='')
 
 
+def user_add_view(request, error=''):
+    form = UserModelAddForm()
+    context = {
+        'form': form,
+        'error': error
+    }
+    return render(request, 'user_add.html', context)
+
+
+def user_add(request):
+    if request.method == "POST":
+        form = UserModelAddForm(request.POST)
+        if form.is_valid():
+            form.save()
+        print(form.errors)
+    return user_add_view(request, error='')
+
+
+def feedback_add_view(request, error=''):
+    form = FeedbackModelAddForm()
+    context = {
+        'form': form,
+        'error': error
+    }
+    return render(request, 'add_feedback.html', context)
+
+
+def feedback_add(request):
+    if request.method == "POST":
+        form = FeedbackModelAddForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("feedbacks")
+        # print(form.errors)
+    return feedback_add_view(request, error='')
+
+
+def feedbacks_view(request):
+    context = {
+        'feedbacks': Feedback.objects.all()
+    }
+
+    return render(
+        request=request,
+        template_name="feedbacks.html",
+        context=context,
+    )

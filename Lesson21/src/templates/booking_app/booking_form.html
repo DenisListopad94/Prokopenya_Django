@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %}Comments{% endblock %}
 {% block content %}
@@ -8,7 +9,7 @@
     <p>{{ error }}</p>
     <form method="post" action="/booking_app/booking_form">
         {% csrf_token %}
-        {{ form }}
+        {{ form |crispy}}
         <button type="submit">Book Room</button>
     </form>
 
