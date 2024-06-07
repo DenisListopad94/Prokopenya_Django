@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('booking_app/', include('booking_app.urls')),
     path("__debug__/", include("debug_toolbar.urls")),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/', include('booking_rest_api.urls'))
 ]

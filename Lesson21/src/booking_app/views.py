@@ -3,7 +3,9 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponseServerError, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Person, Hotels, HotelsComment, User, Room, Booking, Feedback
+from django.views.generic import TemplateView, ListView, FormView, CreateView
+
+from .models import Person, Hotels, HotelsComment, User, Room, Booking, Feedback, Comment
 from .forms import BookingRoom, UserModelAddForm, FeedbackModelAddForm
 
 
@@ -37,68 +39,6 @@ def users(request):
     return render(
         request=request,
         template_name="users.html",
-        context=context,
-    )
-
-
-def comments(request):
-    users_list = [
-        {
-            "name": "John",
-            "age": 25,
-            "comments": ["Great post!", "I totally agree with you."]
-        },
-        {
-            "name": "Alice",
-            "age": 30,
-            "comments": ["Interesting perspective.", "Nice work!"]
-        },
-        {
-            "name": "Bob",
-            "age": 28,
-            "comments": ["Thanks for sharing.", "Well written."]
-        },
-        {
-            "name": "Emily",
-            "age": 35,
-            "comments": ["I have a question.", "This is helpful."]
-        },
-        {
-            "name": "David",
-            "age": 22,
-            "comments": ["I learned something new.", "Keep up the good work!"]
-        },
-        {
-            "name": "Emma",
-            "age": 27,
-            "comments": ["Great post!", "I totally agree with you."]
-        },
-        {
-            "name": "Michael",
-            "age": 33,
-            "comments": ["Interesting perspective.", "Nice work!"]
-        },
-        {
-            "name": "Sophia",
-            "age": 29,
-            "comments": ["Thanks for sharing.", "Well written."]
-        },
-        {
-            "name": "William",
-            "age": 31,
-            "comments": ["I have a question.", "This is helpful."]
-        },
-        {
-            "name": "Olivia",
-            "age": 26,
-            "comments": ["I learned something new.", "Keep up the good work!"]
-        }
-    ]
-    context = {'users_list': users_list}
-
-    return render(
-        request=request,
-        template_name="comments.html",
         context=context,
     )
 
@@ -218,24 +158,6 @@ def book_room(request):
     return booking_form_view(request, error='')
 
 
-def user_add_view(request, error=''):
-    form = UserModelAddForm()
-    context = {
-        'form': form,
-        'error': error
-    }
-    return render(request, 'user_add.html', context)
-
-
-def user_add(request):
-    if request.method == "POST":
-        form = UserModelAddForm(request.POST)
-        if form.is_valid():
-            form.save()
-        print(form.errors)
-    return user_add_view(request, error='')
-
-
 def feedback_add_view(request, error=''):
     form = FeedbackModelAddForm()
     context = {
@@ -265,3 +187,104 @@ def feedbacks_view(request):
         template_name="feedbacks.html",
         context=context,
     )
+
+
+users_list = [
+        {
+            "name": "John",
+            "age": 25,
+            "comments": ["Great post!", "I totally agree with you."]
+        },
+        {
+            "name": "Alice",
+            "age": 30,
+            "comments": ["Interesting perspective.", "Nice work!"]
+        },
+        {
+            "name": "Bob",
+            "age": 28,
+            "comments": ["Thanks for sharing.", "Well written."]
+        },
+        {
+            "name": "Emily",
+            "age": 35,
+            "comments": ["I have a question.", "This is helpful."]
+        },
+        {
+            "name": "David",
+            "age": 22,
+            "comments": ["I learned something new.", "Keep up the good work!"]
+        },
+        {
+            "name": "Emma",
+            "age": 27,
+            "comments": ["Great post!", "I totally agree with you."]
+        },
+        {
+            "name": "Michael",
+            "age": 33,
+            "comments": ["Interesting perspective.", "Nice work!"]
+        },
+        {
+            "name": "Sophia",
+            "age": 29,
+            "comments": ["Thanks for sharing.", "Well written."]
+        },
+        {
+            "name": "William",
+            "age": 31,
+            "comments": ["I have a question.", "This is helpful."]
+        },
+        {
+            "name": "Olivia",
+            "age": 26,
+            "comments": ["I learned something new.", "Keep up the good work!"]
+        }
+    ]
+
+
+def user_comments_view(request):
+
+    context = {'users_list': users_list}
+
+    return render(
+        request=request,
+        template_name="comments.html",
+        context=context,
+    )
+
+
+class CommentTemplateView(ListView):
+    template_name = "comments.html"
+    model = HotelsComment
+    queryset = HotelsComment.objects.all()
+    context_object_name = "comments"
+    paginate_by = 3
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context["comments"] = HotelsComment.objects.all()
+    #     return context
+
+
+def user_add_view(request, error=''):
+    form = UserModelAddForm()
+    context = {
+        'form': form,
+        'error': error
+    }
+    return render(request, 'user_add.html', context)
+
+
+def user_add(request):
+    if request.method == "POST":
+        form = UserModelAddForm(request.POST)
+        if form.is_valid():
+            form.save()
+    return user_add_view(request, error='')
+
+
+class UserFormView(CreateView):
+    template_name = 'user_add.html'
+    form_class = UserModelAddForm
+    success_url = '/booking_app/users'

@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django.contrib.staticfiles',
     'booking_app',
+    'booking_rest_api.apps.BookingRestApiConfig',
     'django_extensions',
     'crispy_forms',
     'crispy_bootstrap5',
+    'rest_framework',
 ]
 
 
@@ -152,3 +154,12 @@ INTERNAL_IPS = [
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+
+# REST_FRAMEWORK = {
+#     # Use Django's standard `django.contrib.auth` permissions,
+#     # or allow read-only access for unauthenticated users.
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+#     ]
+# }
