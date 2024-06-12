@@ -1,14 +1,14 @@
-from django.http import Http404
-from django.shortcuts import render
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import serializers, status, mixins, generics
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, HotelOwnerSerializer, HobbiesModelSerializer
 from booking_app.models import HotelOwner, Hobby
+from rest_framework import generics, mixins
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from django.http import Http404
+from .serializers import UserSerializer, HotelOwnerSerializer, HobbiesModelSerializer
 
-
-# Create your views here.
 
 class UserApiView(APIView):
 
@@ -19,6 +19,7 @@ class UserApiView(APIView):
 
 
 class HotelOwnerListView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         hotel_owners = HotelOwner.objects.all()
@@ -41,7 +42,7 @@ class HotelOwnerDetailView(APIView):
         except HotelOwner.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk):  # Обратите внимание на этот метод
+    def get(self, request, pk):
         owner = self.get_object(pk)
         serializer = HotelOwnerSerializer(owner)
         return Response(serializer.data)
@@ -61,8 +62,13 @@ class HotelOwnerDetailView(APIView):
 
 
 class HobbyListApiView(mixins.ListModelMixin, generics.GenericAPIView):
-    queryset = Hobby.objects.all()
+    authentication_classes = [TokenAuthentication]
     serializer_class = HobbiesModelSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Hobby.objects.all()
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+

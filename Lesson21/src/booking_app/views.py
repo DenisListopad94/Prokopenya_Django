@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponseServerError, HttpResponseBadRequest, HttpResponseRedirect
@@ -43,6 +44,8 @@ def users(request):
     )
 
 
+@login_required(login_url="/admin/login/")
+@permission_required("booking_app.view_persons")
 def persons(request):
     context = {
         'persons_list': Person.objects.all().prefetch_related("hotel_comments").prefetch_related("hobbies")
