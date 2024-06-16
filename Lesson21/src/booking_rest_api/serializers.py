@@ -57,3 +57,9 @@ class HobbiesModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hobby
         fields = ["name", "experience"]
+
+
+class UserModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hobby
+        fields = ["username", "first_name", "last_name", "email", "is_superuser", "is_staff"]

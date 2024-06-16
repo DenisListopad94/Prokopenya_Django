@@ -1,11 +1,11 @@
-from django.contrib import messages
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpRequest, HttpResponse, HttpResponseServerError, HttpResponseBadRequest, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import TemplateView, ListView, FormView, CreateView
-
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.views.decorators.cache import cache_page
+from django.views.generic import ListView, CreateView
 from .models import Person, Hotels, HotelsComment, User, Room, Booking, Feedback, Comment
 from .forms import BookingRoom, UserModelAddForm, FeedbackModelAddForm
 
@@ -43,14 +43,15 @@ def users(request):
         context=context,
     )
 
-
+@cache_page(timeout=30)
 @login_required(login_url="/admin/login/")
 @permission_required("booking_app.view_persons")
 def persons(request):
     context = {
         'persons_list': Person.objects.all().prefetch_related("hotel_comments").prefetch_related("hobbies")
     }
-
+    from time import sleep
+    sleep(10)
     return render(
         request=request,
         template_name="persons.html",
