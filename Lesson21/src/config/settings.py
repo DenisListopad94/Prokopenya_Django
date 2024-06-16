@@ -40,8 +40,15 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django.contrib.staticfiles',
     'booking_app',
+    'booking_rest_api.apps.BookingRestApiConfig',
     'django_extensions',
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'django_filters'
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,6 +56,9 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    "django.middleware.cache.UpdateCacheMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.cache.FetchFromCacheMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -145,3 +155,30 @@ INTERNAL_IPS = [
     '127.0.0.1',
     '::1',
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTIFICATION_CLASSES': [
+        'rest_framework.authentification.TokenAthentidication'
+    ],
+
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}

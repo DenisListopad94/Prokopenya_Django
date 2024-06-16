@@ -86,13 +86,6 @@ class HotelsAdmin(admin.ModelAdmin):
     ]
 
 
-# class BookInfoAdmin(admin.ModelAdmin):
-#     list_display = ["detail", "book_time"]
-#     inlines = [
-#         PersonInline,
-#     ]
-
-
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Profile)
 admin.site.register(Hotels, HotelsAdmin)

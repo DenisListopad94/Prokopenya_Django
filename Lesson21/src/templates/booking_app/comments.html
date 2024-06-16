@@ -5,10 +5,11 @@
 {% block content %}
 <h1>Комментарии</h1>
 <ul>
-    {% for user in users_list %}
+    {% for user in comments %}
     <li>
-        <img src="{% static 'images/user_pic/user.jpg' %}" alt="My image">Имя: {{ user.name }}<br>
-        Отзыв: {{ user.comments }}
+<!--        <img src="{% static 'images/user_pic/user.jpg' %}" alt="My image">-->
+        Имя: {{ user.id }}<br>
+        Отзыв: {{ user.comment }}
     </li>
     {% endfor %}
 </ul>
