@@ -2,6 +2,8 @@ import django_filters.rest_framework
 from django.contrib.auth.models import User
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView
+from rest_framework.pagination import LimitOffsetPagination
+
 from booking_app.models import HotelOwner, Hobby
 from rest_framework import generics, mixins
 from rest_framework.views import APIView
@@ -15,21 +17,23 @@ import django_filters.rest_framework
 
 
 class UserApiView(ListAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer = UserModelSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['is_superuser', 'is_staff']
+    pagination_class = LimitOffsetPagination
 
-    # def get(self, request, format=None):
-    #     users = User.objects.all()
-    #     serializer = UserSerializer(users, many=True)
-    #     return Response(serializer.data)
+    def get(self, request, format=None):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
 
 
 class HotelOwnerListView(APIView):
     permission_classes = [IsAuthenticated]
     # filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    pagination_class = LimitOffsetPagination
 
     def get(self, request, format=None):
         hotel_owners = HotelOwner.objects.all()

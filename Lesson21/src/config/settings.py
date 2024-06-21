@@ -141,6 +141,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media_files')
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
@@ -162,18 +165,20 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTIFICATION_CLASSES': [
-        'rest_framework.authentification.TokenAthentidication'
-    ],
-
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ],
+    # 'DEFAULT_AUTHENTIFICATION_CLASSES': [
+    #     'rest_framework.authentication.TokenAuthentication'
+    # ],
+    #
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    # ],
 
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
 
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 1
 }
 
 CACHES = {

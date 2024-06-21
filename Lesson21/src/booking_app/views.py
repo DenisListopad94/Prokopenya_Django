@@ -1,4 +1,3 @@
-
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models import Q
@@ -43,7 +42,8 @@ def users(request):
         context=context,
     )
 
-@cache_page(timeout=30)
+
+@cache_page(timeout=1)
 @login_required(login_url="/admin/login/")
 @permission_required("booking_app.view_persons")
 def persons(request):
@@ -282,9 +282,14 @@ def user_add_view(request, error=''):
 
 def user_add(request):
     if request.method == "POST":
-        form = UserModelAddForm(request.POST)
+        form = UserModelAddForm(request.POST, request.FILES)
         if form.is_valid():
+            print(form.errors)
             form.save()
+        else:
+            print(form.errors)
+        #     import pdb
+        #     pdb.set_trace()
     return user_add_view(request, error='')
 
 

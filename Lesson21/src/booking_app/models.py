@@ -17,6 +17,7 @@ class User(models.Model):
     city = models.CharField(max_length=30, null=False)
     sex = models.CharField(max_length=1, choices=SEX_PERSON)
     email = models.EmailField(null=True)
+    photo = models.ImageField(null=True, upload_to='users_photo/', verbose_name="photo")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user_hobbies = models.ManyToManyField(to="Hobby")
