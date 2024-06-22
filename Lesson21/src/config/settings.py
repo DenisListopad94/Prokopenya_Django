@@ -105,6 +105,9 @@ DATABASES = {
         "HOST": os.environ.get("DB_HOST", "localhost"),
         "PORT": os.environ.get("DB_PORT", 5432),
         "PASSWORD": os.environ.get("DB_PASS", "root"),
+        "TEST": {
+            "NAME": os.environ.get("TEST_DATABASE_NAME")
+        }
 
     }
 }

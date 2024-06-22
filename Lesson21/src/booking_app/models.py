@@ -136,6 +136,11 @@ class Feedback(models.Model):
     text = models.CharField(max_length=100)
 
 
+class Queue(models.Model):
+    value = models.PositiveIntegerField(null=True)
+
+    def __str__(self):
+        return f'{self.value}'
 
 
 
