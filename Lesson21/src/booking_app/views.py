@@ -50,8 +50,11 @@ def persons(request):
     context = {
         'persons_list': Person.objects.all().prefetch_related("hotel_comments").prefetch_related("hobbies")
     }
-    from time import sleep
-    sleep(10)
+    # from time import sleep
+    # sleep(10)
+    from config.celery import debug_task_two, get_users
+    debug_task_two.delay(15)
+    get_users.delay(15)
     return render(
         request=request,
         template_name="persons.html",

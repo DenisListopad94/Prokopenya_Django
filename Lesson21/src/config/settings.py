@@ -46,7 +46,10 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'rest_framework',
     'rest_framework.authtoken',
-    'django_filters'
+    'django_filters',
+    'django_celery_results',
+    'django_celery_beat',
+
 ]
 
 
@@ -190,3 +193,17 @@ CACHES = {
         "LOCATION": "unique-snowflake",
     }
 }
+
+
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'default-redis'
+
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = '6379'
+CELERY_BROKER_URL = 'redis://'+REDIS_HOST+":"+REDIS_PORT+'/0'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+# CELERY_RESULT_BACKEND = 'redis://'+REDIS_HOST+":"+REDIS_PORT+'/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
